@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="1c6d7822-cd16-4d3e-af3b-b028ac56497d" name="memo">
+        <fileTransfer rootFolder="/root" accessType="SFTP" host="104.248.235.227" port="22" sshConfigId="bc98401e-cda8-449a-acac-b7e1c7c0f900" sshConfig="root@104.248.235.227:22 agent" authAgent="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
