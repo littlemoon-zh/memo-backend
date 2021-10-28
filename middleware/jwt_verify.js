@@ -9,6 +9,7 @@ const jwt = require("jsonwebtoken");
 const jwt_verify = (req, res, next) => {
     try {
         const verified = jwt.verify(req.headers['token'] || "", process.env.SECRET_KEY);
+        req.userId = verified.id;
         console.log(verified, 'verified');
     } catch (e) {
         console.log(e)
@@ -21,7 +22,7 @@ const jwt_verify = (req, res, next) => {
 }
 
 const sign = (data) => {
-    return jwt.sign(data, process.env.SECRET_KEY, {expiresIn: '3600s'})
+    return jwt.sign(data, process.env.SECRET_KEY, {expiresIn: '7200s'})
 }
 
 exports.jwt_verify = jwt_verify;

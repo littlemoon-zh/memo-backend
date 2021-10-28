@@ -29,6 +29,7 @@ const SECRET_KEY = config.SECRET_KEY || 'test jwt secret key'
 // CORS middleware
 app.use(cors());
 app.use('/api', jwt_verify)
+
 app.use(morgan('tiny'));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
@@ -36,31 +37,32 @@ app.use(express.json());
 // router
 app.use('/', userRouter);
 
-app.get('/', jwt_verify, (req, res) => {
-    res.send('Hello there!');
-})
-
 
 app.get('/info', async (req, res) => {
     const info = {name: 'yhx', age: 23};
     res.send(info);
 })
 
-app.get('/api/notes', (req, res, next) => {
-    const notes = [
-        {'id': 1, 'content': 'dfa', 'create_time': new Date()},
-        {'id': 2, 'content': 'dfa', 'create_time': new Date()},
-        {'id': 3, 'content': 'dfa', 'create_time': new Date()}
-    ]
+app.get('/api/notes', async (req, res) => {
+    const userId = req.userId;
+
+    let notes = await Note.find({'creator': userId},
+        {'__v': 0, 'creator': 0}).sort({create_time: -1});
+    console.log(notes);
+    // console.log(anotes);
+    // const notes = [
+    //     {'id': 1, 'content': 'dfa', 'create_time': new Date()},
+    //     {'id': 2, 'content': 'dfa', 'create_time': new Date()},
+    //     {'id': 3, 'content': 'dfa', 'create_time': new Date()}
+    // ]
     res.json({notes, status: 200});
 })
 
 
-app.post('/api/note', jwt_verify, async (req, res) => {
-    const node = await Note.create(req.body);
+app.post('/api/note', async (req, res) => {
+    const node = await Note.create({...req.body, creator: req.userId});
     await node.save();
-
-    req.json({
+    res.json({
         msg: 'success',
         status: 200
     })
