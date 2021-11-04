@@ -12,7 +12,10 @@ const user_login = async (req, res) => {
     console.log(username, password);
     const user = await User.findOne({"username": username});
     console.log(user);
-    console.log(user.password, password, user.password === password);
+    if (!user) {
+        res.json({msg: 'wrong username or password', status: 400})
+        return;
+    }
     if (user.password === password) {
         const token = sign({username, id: String(user._id)});
         res.json({msg: 'success', token, status: 200})

@@ -3,7 +3,7 @@ const {Schema} = mongoose;
 
 const noteSchema = new Schema({
     content: {type: String, required: true},
-    create_time: {type: Date, default: Date.now()},
+    create_time: {type: Date, default: Date.now},
     creator: String,
     tag: Array,
     last_edit: Date
