@@ -15,8 +15,9 @@ const jwt_verify = (req, res, next) => {
         console.log(e)
         res.json({
             msg: 'verification failed',
-            status: '400'
+            code: '400'
         });
+        return
     }
     next();
 }

@@ -5,7 +5,7 @@ const noteSchema = new Schema({
     content: {type: String, required: true},
     create_time: {type: Date, default: Date.now},
     creator: String,
-    tag: Array,
+    tags: Array,
     last_edit: Date
 })
 

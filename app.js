@@ -11,7 +11,7 @@ const Note = require('./models/note')
 
 // load config file to process.env
 for (const [key, value] of Object.entries(config))
-    process.env[key] = value
+  process.env[key] = value
 console.log(process.env)
 
 
@@ -34,42 +34,45 @@ app.use(morgan('tiny'));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
+app.use((err, req, res, next) => {
+  res.json({code: 500, msg: '', data: {}})
+})
+
 // router
 app.use('/', userRouter);
 
 
-app.get('/info', async (req, res) => {
-    const info = {name: 'yhx', age: 23};
-    res.send(info);
-})
-
 app.get('/api/notes', async (req, res) => {
-    const userId = req.userId;
-
-    let notes = await Note.find({'creator': userId},
-        {'__v': 0, 'creator': 0}).sort({create_time: -1});
-    console.log(notes);
-    // console.log(anotes);
-    // const notes = [
-    //     {'id': 1, 'content': 'dfa', 'create_time': new Date()},
-    //     {'id': 2, 'content': 'dfa', 'create_time': new Date()},
-    //     {'id': 3, 'content': 'dfa', 'create_time': new Date()}
-    // ]
-    res.json({notes, status: 200});
+  const userId = req.userId;
+  const notes = await Note.find({'creator': userId},
+    {'__v': 0, 'creator': 0}).sort({create_time: -1});
+  res.json({msg: 'success', code: 200, data: {notes}});
 })
 
 
 app.post('/api/note', async (req, res) => {
-    const node = await Note.create({...req.body, creator: req.userId});
-    await node.save();
-    res.json({
-        msg: 'success',
-        status: 200
-    })
+  const note = await Note.create({...req.body, creator: req.userId});
+  for (let word of note['content'].replaceAll('\n', ' ').split(' ')) {
+    if (word.startsWith('#') && word.length > 1) {
+      note['tags'].push(word.substr(1))
+    }
+  }
+  await note.save();
+  res.json({
+    msg: 'success',
+    code: 200,
+    data: note
+  })
+})
+
+app.delete('/api/note/:id', async (req, res) => {
+  const id = req.params.id;
+  await Note.findByIdAndRemove(id);
+  res.json({code: 200, msg: 'success', data: {}})
 })
 
 app.listen(PORT, () => {
-    console.log(`Listening at http://localhost:${PORT}`)
+  console.log(`Listening at http://localhost:${PORT}`)
 })
 
 

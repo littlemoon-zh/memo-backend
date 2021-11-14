@@ -4,23 +4,21 @@
  */
 
 const User = require('../models/user');
-const jwt = require('jsonwebtoken');
 const {sign} = require('../middleware/jwt_verify');
 
 const user_login = async (req, res) => {
     const {username, password} = req.body;
-    console.log(username, password);
     const user = await User.findOne({"username": username});
     console.log(user);
     if (!user) {
-        res.json({msg: 'wrong username or password', status: 400})
+        res.json({msg: 'username does not exist', code: 400, data: {}})
         return;
     }
     if (user.password === password) {
         const token = sign({username, id: String(user._id)});
-        res.json({msg: 'success', token, status: 200})
+        res.json({msg: 'success', code: 200, data: {token}})
     } else {
-        res.json({msg: 'validation error', status: 400})
+        res.json({msg: 'wrong password, try again', code: 400, data: {}})
     }
 }
 
